@@ -32,16 +32,13 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        with:
-          args: >
-            -Dsonar.projectKey=doccano-aws
-            -Dsonar.projectName=Doccano AWS
-            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
-            -Dsonar.sources=.
-            -Dsonar.sourceEncoding=UTF-8
-            -Dsonar.python.version=3.9
-            -Dsonar.exclusions=**/node_modules/**,**/__pycache__/**,**/migrations/**,**/*.test.*,**/tests/**
-
+          SONAR_PROJECT_KEY: doccano-aws
+          SONAR_PROJECT_NAME: Doccano AWS
+          SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
+          SONAR_SOURCES: .
+          SONAR_SOURCE_ENCODING: UTF-8
+          SONAR_PYTHON_VERSION: 3.9
+          SONAR_EXCLUSIONS: '**/node_modules/**,**/__pycache__/**,**/migrations/**,**/*.test.*,**/tests/**'
       - name: SonarQube Quality Gate Check
         uses: SonarSource/sonarqube-quality-gate-action@v1
         timeout-minutes: 5
