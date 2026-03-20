@@ -42,7 +42,7 @@ jobs:
           SONAR_HOST_URL: https://sonarcloud.io
         with:
           args: >
-            -Dsonar.projectKey=doccano-aws
+            -Dsonar.projectKey=Irefoh1_doccano-aws
             -Dsonar.projectName=DoccanoAWS
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
             -Dsonar.sources=.
