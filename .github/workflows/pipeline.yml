@@ -16,7 +16,7 @@ env:
 
 jobs:
   # ============================================
-  # Stage 1: Code Quality Scan with SonarQube
+  # Stage 1: Code Quality Scan with SonarQubes
   # ============================================
   sonarqube-scan:
     name: SonarQube Code Scan
