@@ -33,7 +33,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SONAR_PROJECT_KEY: doccano-aws
-          SONAR_PROJECT_NAME: Doccano AWS
+          SONAR_PROJECT_NAME: DoccanoAWS
           SONAR_ORGANIZATION: ${{ secrets.SONAR_ORGANIZATION }}
           SONAR_SOURCES: .
           SONAR_SOURCE_ENCODING: UTF-8
