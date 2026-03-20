@@ -16,7 +16,7 @@ env:
 
 jobs:
   # ============================================
-  # Stage 1: Code Quality Scan with SonarQubes
+  # Stage 1: Code Quality Scan with SonarQube
   # ============================================
   sonarqube-scan:
     name: SonarQube Code Scan
@@ -26,6 +26,24 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Debug - Check Secrets
+        run: |
+          if [ -z "${{ secrets.SONAR_TOKEN }}" ]; then
+            echo "❌ SONAR_TOKEN is EMPTY"
+          else
+            echo "✅ SONAR_TOKEN is set"
+          fi
+          if [ -z "${{ secrets.SONAR_HOST_URL }}" ]; then
+            echo "❌ SONAR_HOST_URL is EMPTY"
+          else
+            echo "✅ SONAR_HOST_URL is set"
+          fi
+          if [ -z "${{ secrets.SONAR_ORGANIZATION }}" ]; then
+            echo "❌ SONAR_ORGANIZATION is EMPTY"
+          else
+            echo "✅ SONAR_ORGANIZATION is set"
+          fi
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v3
