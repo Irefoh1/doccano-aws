@@ -8,8 +8,6 @@ on:
 
 env:
   DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-  SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   IMAGE_NAME_BACKEND: ${{ secrets.DOCKERHUB_USERNAME }}/doccano-backend
   IMAGE_NAME_FRONTEND: ${{ secrets.DOCKERHUB_USERNAME }}/doccano-frontend
   IMAGE_TAG: ${{ github.sha }}
@@ -29,27 +27,19 @@ jobs:
 
       - name: Debug - Check Secrets
         run: |
-          if [ -z "${{ secrets.SONAR_TOKEN }}" ]; then
-            echo "❌ SONAR_TOKEN is EMPTY"
-          else
-            echo "✅ SONAR_TOKEN is set"
-          fi
-          if [ -z "${{ secrets.SONAR_HOST_URL }}" ]; then
-            echo "❌ SONAR_HOST_URL is EMPTY"
-          else
-            echo "✅ SONAR_HOST_URL is set"
-          fi
-          if [ -z "${{ secrets.SONAR_ORGANIZATION }}" ]; then
-            echo "❌ SONAR_ORGANIZATION is EMPTY"
-          else
-            echo "✅ SONAR_ORGANIZATION is set"
-          fi
+          echo "SONAR_HOST_URL length: ${#SONAR_HOST_URL}"
+          echo "SONAR_TOKEN length: ${#SONAR_TOKEN}"
+          echo "SONAR_ORG length: ${#SONAR_ORG}"
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_ORG: ${{ secrets.SONAR_ORGANIZATION }}
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v3
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_HOST_URL: https://sonarcloud.io
         with:
           args: >
             -Dsonar.projectKey=doccano-aws
