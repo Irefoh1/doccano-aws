@@ -19,6 +19,7 @@ jobs:
   sonarqube-scan:
     name: SonarQube Code Scan
     runs-on: ubuntu-latest
+    environment: Staging
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -43,7 +44,7 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=Irefoh1_doccano-aws
-            -Dsonar.projectName=DoccanoAWS
+            -Dsonar.projectName=doccano-aws
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
             -Dsonar.sources=.
             -Dsonar.sourceEncoding=UTF-8
