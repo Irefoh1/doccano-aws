@@ -64,6 +64,7 @@ jobs:
   build-and-push:
     name: Build & Push Docker Images
     runs-on: ubuntu-latest
+    environment: Staging
     needs: sonarqube-scan
     steps:
       - name: Checkout code
@@ -96,6 +97,7 @@ jobs:
   trivy-scan:
     name: Trivy Image Vulnerability Scan
     runs-on: ubuntu-latest
+    environment: Staging
     needs: build-and-push
     steps:
       - name: Checkout code
@@ -150,6 +152,7 @@ jobs:
   deploy:
     name: Run Containers
     runs-on: ubuntu-latest
+    environment: Staging
     needs: trivy-scan
     steps:
       - name: Checkout code
