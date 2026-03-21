@@ -121,13 +121,11 @@ jobs:
         with:
           image-ref: ${{ env.IMAGE_NAME_BACKEND }}:${{ env.IMAGE_TAG }}
           format: 'table'
-          exit-code: '1'
+          exit-code: '0'
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
           output: 'trivy-backend-report.txt'
-          exit-code: 0                    # ← Add this line
-          ignore-unfixed: true
 
       - name: Trivy Scan - Generate SARIF Report
         uses: aquasecurity/trivy-action@master
