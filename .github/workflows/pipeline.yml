@@ -173,7 +173,16 @@ jobs:
           {
             echo "IMAGE_TAG=${{ env.IMAGE_TAG }}"
             echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}"
-            } >> .env
+            echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}"
+            echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}"
+            echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}"
+            echo "RABBITMQ_DEFAULT_USER=${{ secrets.RABBITMQ_DEFAULT_USER }}"
+            echo "RABBITMQ_DEFAULT_PASS=${{ secrets.RABBITMQ_DEFAULT_PASS }}"
+            echo "ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }}"
+            echo "ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}"
+            echo "ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}"
+            echo "FLOWER_BASIC_AUTH=${{ secrets.FLOWER_BASIC_AUTH }}"
+          } >> .env
 
       - name: Run Containers with Docker Compose
         run: |
@@ -188,7 +197,7 @@ jobs:
           docker ps -a
           echo ""
           echo "=== Container Logs ==="
-          docker compose logs --tail=50
+          docker compose -f docker/docker-compose.prod.yml logs --tail=50
           echo ""
           echo "=== Health Check ==="
           curl -f http://localhost:8000/health || echo "Health check endpoint not available"
