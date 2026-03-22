@@ -179,6 +179,8 @@ jobs:
         run: |
           docker compose -f docker/docker-compose.prod.yml --env-file .env up -d
           sleep 10
+          docker compose -f docker/docker-compose.prod.yml logs postgres
+          docker compose -f docker/docker-compose.prod.yml logs backend
 
       - name: Verify Containers are Running
         run: |
