@@ -1,12 +1,15 @@
 version: "3.8"
+
 services:
 
   backend:
     image: irefoh/doccano-backend
+    ports:
+      - "8000:8000"            # Map host port 8000 → container port 8000
     volumes:
-      - static_volume:/backend/staticfiles
-      - media:/backend/media
-      - tmp_file:/backend/filepond-temp-uploads
+      - static_volume:/doccano/backend/staticfiles
+      - media:/data/media
+      - tmp_file:/data/filepond-temp-uploads
     environment:
       ADMIN_USERNAME: "${ADMIN_USERNAME}"
       ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
@@ -18,15 +21,15 @@ services:
       DJANGO_SETTINGS_MODULE: "config.settings.production"
     depends_on:
       - postgres
+      - rabbitmq
     networks:
-      - network-backend
-      - network-frontend
+      - network-main
 
   celery:
     image: irefoh/doccano-backend
     volumes:
-      - media:/backend/media
-      - tmp_file:/backend/filepond-temp-uploads
+      - media:/data/media
+      - tmp_file:/data/filepond-temp-uploads
     entrypoint: ["/opt/bin/prod-celery.sh"]
     environment:
       PYTHONUNBUFFERED: "1"
@@ -36,8 +39,9 @@ services:
     depends_on:
       - postgres
       - rabbitmq
+      - backend
     networks:
-      - network-backend
+      - network-main
 
   flower:
     image: irefoh/doccano-backend
@@ -47,14 +51,13 @@ services:
       CELERY_BROKER_URL: "amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq"
       DATABASE_URL: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable"
       DJANGO_SETTINGS_MODULE: "config.settings.production"
-      FLOWER_BASIC_AUTH: "${FLOWER_BASIC_AUTH}" # Format "username:password"
+      FLOWER_BASIC_AUTH: "${FLOWER_BASIC_AUTH}"
     depends_on:
       - celery
     ports:
-      - 5555:5555
+      - "5555:5555"
     networks:
-      - network-backend
-      - network-frontend
+      - network-main
 
   rabbitmq:
     image: rabbitmq:3.10.7-alpine
@@ -62,32 +65,9 @@ services:
       RABBITMQ_DEFAULT_USER: "${RABBITMQ_DEFAULT_USER}"
       RABBITMQ_DEFAULT_PASS: "${RABBITMQ_DEFAULT_PASS}"
     ports:
-      - 5672:5672
+      - "5672:5672"
     networks:
-      - network-backend
-
-  nginx:
-    image: irefoh/doccano-frontend
-    command: >
-      /bin/sh -c
-      "envsubst '
-      $${WORKER_PROCESSES}
-      '< /etc/nginx/nginx.conf.template
-      > /etc/nginx/nginx.conf
-      && nginx -g 'daemon off;'"
-    environment:
-      API_URL: "http://backend:8000"
-      GOOGLE_TRACKING_ID: ""
-      WORKER_PROCESSES: "auto"
-    volumes:
-      - static_volume:/static
-      - media:/media
-    ports:
-      - 80:8080
-    depends_on:
-      - backend
-    networks:
-      - network-frontend
+      - network-main
 
   postgres:
     image: postgres:13.3-alpine
@@ -98,7 +78,7 @@ services:
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
       POSTGRES_DB: "${POSTGRES_DB}"
     networks:
-      - network-backend
+      - network-main
 
 volumes:
   postgres_data:
@@ -107,5 +87,4 @@ volumes:
   tmp_file:
 
 networks:
-  network-backend:
-  network-frontend:
+  network-main:
