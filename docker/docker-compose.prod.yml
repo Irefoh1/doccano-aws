@@ -5,7 +5,7 @@ services:
   backend:
     image: irefoh/doccano-backend
     ports:
-      - "8000:8000"            # Map host port 8000 → container port 8000
+      - "8000:8000"
     volumes:
       - static_volume:/doccano/backend/staticfiles
       - media:/data/media
@@ -13,7 +13,7 @@ services:
     environment:
       ADMIN_USERNAME: "${ADMIN_USERNAME}"
       ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
-      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_EMAIL: "${ADMIN_EMAIL}"
       CELERY_BROKER_URL: "amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq"
       DATABASE_URL: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable"
       ALLOW_SIGNUP: "False"
@@ -24,12 +24,14 @@ services:
       - rabbitmq
     networks:
       - network-main
+
   celery:
     image: irefoh/doccano-backend
+    working_dir: /doccano/backend
+    entrypoint: ["celery", "--app=config", "worker", "--loglevel=INFO", "--concurrency=1"]
     volumes:
       - media:/data/media
       - tmp_file:/data/filepond-temp-uploads
-    entrypoint: ["celery", "--app=config", "worker", "--loglevel=INFO", "--concurrency=1"]
     environment:
       PYTHONUNBUFFERED: "1"
       CELERY_BROKER_URL: "amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq"
@@ -44,7 +46,9 @@ services:
 
   flower:
     image: irefoh/doccano-backend
+    working_dir: /doccano/backend
     entrypoint: ["celery", "--app=config", "flower", "--loglevel=INFO"]
+    environment:
       PYTHONUNBUFFERED: "1"
       CELERY_BROKER_URL: "amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq"
       DATABASE_URL: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable"
