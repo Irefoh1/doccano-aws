@@ -168,10 +168,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Create .env file
+      - name: Update .env file
         run: |
-          echo "IMAGE_TAG=${{ env.IMAGE_TAG }}" >> .env
-          echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> .env
+          {
+            echo "IMAGE_TAG=${{ env.IMAGE_TAG }}"
+            echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}"
+            } >> .env
 
       - name: Run Containers with Docker Compose
         run: |
