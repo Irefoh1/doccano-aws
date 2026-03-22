@@ -24,13 +24,12 @@ services:
       - rabbitmq
     networks:
       - network-main
-
   celery:
     image: irefoh/doccano-backend
     volumes:
       - media:/data/media
       - tmp_file:/data/filepond-temp-uploads
-    entrypoint: ["/opt/bin/prod-celery.sh"]
+    entrypoint: ["celery", "--app=config", "worker", "--loglevel=INFO", "--concurrency=1"]
     environment:
       PYTHONUNBUFFERED: "1"
       CELERY_BROKER_URL: "amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq"
@@ -45,8 +44,7 @@ services:
 
   flower:
     image: irefoh/doccano-backend
-    entrypoint: ["/opt/bin/prod-flower.sh"]
-    environment:
+    entrypoint: ["celery", "--app=config", "flower", "--loglevel=INFO"]
       PYTHONUNBUFFERED: "1"
       CELERY_BROKER_URL: "amqp://${RABBITMQ_DEFAULT_USER}:${RABBITMQ_DEFAULT_PASS}@rabbitmq"
       DATABASE_URL: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable"
