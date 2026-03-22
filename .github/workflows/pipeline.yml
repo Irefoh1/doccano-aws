@@ -175,7 +175,7 @@ jobs:
 
       - name: Run Containers with Docker Compose
         run: |
-          docker compose up -d --pull always
+          docker-compose -f docker/docker-compose.prod.yml --env-file .env up
           sleep 10
           docker compose ps
 
